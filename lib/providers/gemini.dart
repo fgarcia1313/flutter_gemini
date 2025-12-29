@@ -6,6 +6,7 @@ import 'package:riverpod_annotation/riverpod_annotation.dart';
 
 import '../firebase_options.dart';
 import 'system_prompt.dart';
+import '../services/gemini_tools.dart';
 
 part 'gemini.g.dart';
 
@@ -16,9 +17,13 @@ Future<FirebaseApp> firebaseApp(Ref ref) => Firebase.initializeApp(options: Defa
 Future<GenerativeModel> geminiModel(Ref ref) async {
   await ref.watch(firebaseAppProvider.future);
   final systemPrompt = await ref.watch(systemPromptProvider.future);
+  final geminiTools = ref.watch(geminiToolsProvider);
 
-  final model = FirebaseAI.googleAI().generativeModel(model: 'gemini-2.0-flash',
-    systemInstruction: Content.system(systemPrompt),  );
+  final model = FirebaseAI.googleAI().generativeModel(
+    model: 'gemini-2.0-flash',
+    systemInstruction: Content.system(systemPrompt),
+    tools: geminiTools.tools,
+  );
   return model;
 }
 
