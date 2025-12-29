@@ -15,13 +15,16 @@ class MainApp extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final model = ref.watch(geminiModelProvider);
+    final conversationState = ref.watch(conversationStateProvider);
 
     return MaterialApp(
-      theme: ThemeData(
-        colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
-      ),
+      theme: ThemeData(colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple)),
       home: model.when(
         data: (data) => MainScreen(
+          conversationState: conversationState,
+          notifyColorSelection: (color) {
+            ref.read(geminiChatServiceProvider).notifyColorSelection(color);
+          },
           sendMessage: (text) {
             ref.read(geminiChatServiceProvider).sendMessage(text);
           },
